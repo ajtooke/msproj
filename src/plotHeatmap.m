@@ -1,15 +1,23 @@
 % This function plots an input image in grayscale with a given feature
 % criteria "heatmap" overlaid in color by intensity.
 
-function plotHeatmap(X, m)
+function plotHeatmap(X, m, useScaling)
 
 if ~exist('m', 'var')
-    m = 20;
+    if exist(useScaling, 'var') && useScaling
+        % find 1D scaling factor based on smaller dimension and m = 20 for
+        % 480 pixel small dimension (i.e., 640 x 480)
+        S = size(X(:, :, 1));
+        scalingFactor = min(S) / 480;
+        m = 20 * scalingFactor;
+    else
+        scalingFactor = 1;
+        m = 20;
+    end
 end
 
 % start with sending input image to buildFeatureVectorLAB and grabbing
 % directional derivatives.
-
 F = buildFeatureVectorLAB(X);
 
 d_m = calcFirstOrderIntegralImage(sqrt(F(:, :, 6).^2 + F(:, :, 7).^2));
