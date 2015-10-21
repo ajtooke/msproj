@@ -1,7 +1,7 @@
 % This function plots an input image in grayscale with a given feature
 % criteria "heatmap" overlaid in color by intensity.
 
-function [Y, mu, sig] = process(X, m, useScaling)
+function [Y, mu, sig, angStruct] = process(X, m, useScaling)
 
 if exist('useScaling', 'var') && strcmp(useScaling, 'noResize')
     % find 1D scaling factor based on smaller dimension and m = 20 for
@@ -36,6 +36,21 @@ for ii = 1:size(dots, 1)
             d_m(m*(ii-1) + 1, m*(jj-1) + 1);
         
     end
+end
+
+N = 10;
+[~, idx] = sort(dots(:), 'descend');
+[i, j] = ind2sub(size(dots), idx(1:N));
+Fy = F(:, :, 7);
+Fx = F(:, :, 6);
+for ii = 1:N
+    [x, y] = meshgrid((i(ii)-1)*m+1 : i(ii)*m, (j(ii)-1)*m+1 : j(ii)*m);
+    idx = sub2ind(size(Fx), x(:), y(:));
+    ang = atan2(Fy(idx), Fx(idx));
+    
+    angStruct(ii).angle = ang;
+    angStruct(ii).X = [x(1, 1), x(1, end)];
+    angStruct(ii).Y = [y(1, 1), y(end, 1)];
 end
 
 Y = repmat(F(:, :, 3)/255, [1, 1, 3]); % Gray scale image

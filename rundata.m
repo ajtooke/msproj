@@ -2,6 +2,7 @@
 
 testdirs = {'test\CIRS Bedroom', 'test\CIRs Kitchen', 'test\CIRs Living Room'};
 outputdir = 'results';
+useAngle = true;
 
 for cir = 1:9
     
@@ -20,7 +21,7 @@ for cir = 1:9
                 imgCount = imgCount + 1;
                 imgFile = [currentDir, '\', d{ii}];
                 currentImg = imread(imgFile);
-                [Y, tempMu, tempSig] = process(currentImg, 20, 'resize');
+                [Y, tempMu, tempSig, angStruct] = process(currentImg, 20, 'resize');
                 
                 mu{cir}(imgCount) = tempMu;
                 sig{cir}(imgCount) = tempSig;
@@ -32,6 +33,18 @@ for cir = 1:9
                 
                 [~, img] = fileparts(imgFile);
                 imwrite(Y, [outputDir, img, '.png'], 'png');
+                
+                if useAngle
+                    figure;
+                    for jj = 1:10
+                        subplot(1, 10, jj);
+                        scatter(1:length(angStruct(jj).angle), angStruct(jj).angle);
+                    end
+                    fig = gcf;
+                    fig.PaperPosition = [0.25 0.25 14 5];
+                    saveas(fig, [outputDir, img, '_angle.png'], 'png');
+                    close(fig);
+                end
 %             catch
                 % probably isn't an image file
 %             end
