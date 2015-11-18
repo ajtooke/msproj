@@ -1,35 +1,49 @@
-function vec = buildFeatureVectorSVR(img)
+function fvec2 = buildFeatureVectorSVR(img, cellSize, blockSize, blockOverlap, numBins, useSignedOrientation)
 
-% this function builds HoG feature vectors for 320x240 images, with block
-% sizes in the top third 40x40 and block sizes in the bottom 2/3 20x20
-
-if size(img, 3) > 1
+[r, c, d] = size(img);
+if d > 1
     img = rgb2gray(img);
 end
+% for ii = 1:d
+%     [grad(:, :, ii), ang(:, :, ii)] = calculateGradient(img(:, :, ii));
+% end
+[grad, ang] = calculateGradient(img);
+% % Use maximum color channel as magnitude and angle of gradient.
+% [~, maxIdx] = max(grad, [], 3);
+% grad = grad(:, :, maxIdx);
+% ang = ang(:, :, maxIdx);
 
-% First, grab magnitudes and angles of gradient vectors in image.
-[mag, ang] = calculateGradient(img);
+% take mod if using unsigned orientation.
+if ~useSignedOrientation
+    ang = mod(ang + pi*(1 + useSignedOrientation)/numBins/2, pi) - pi*(1 + useSignedOrientation)/numBins/2;
+end
 
-vec = zeros(2*8 + 2*4*16, 4);
-vecIdx = 1;
-% Now loop through and calculate the 40x40 blocks.
-for ii = 1:2
-    for jj = 1:8
-        vertIdxs = (ii-1)*40+1:ii*40;
-        horizIdxs = (jj-1)*40+1:jj*40;
-        vec(vecIdx, :) = calculateHoG(mag(vertIdxs, horizIdxs), ang(vertIdxs, horizIdxs));
-        vecIdx = vecIdx + 1;
+blockJump = blockSize - blockOverlap;
+numHorizBlocks = c/(blockJump*cellSize);
+numVertBlocks = r/(blockJump*cellSize);
+
+fvec2 = [];
+
+% loop over each block and cell within each block.
+for ii = 1:numHorizBlocks
+    for jj = 1:numVertBlocks
+        
+        currentCell = 1;
+        % iterate over cells in block
+        for kk = 1:(blockSize)
+            for ll = 1:(blockSize)
+                horizIdxs = ((ii-1)*blockJump*cellSize + (kk-1)*cellSize + 1):((ii-1)*blockJump*cellSize + kk*cellSize);
+                vertIdxs = ((jj-1)*blockJump*cellSize + (ll-1)*cellSize + 1):((jj-1)*blockJump*cellSize + ll*cellSize);
+                fvec(currentCell, :) = calculateHoG(grad(vertIdxs, horizIdxs), ang(vertIdxs, horizIdxs), numBins, useSignedOrientation);
+                currentCell = currentCell + 1;
+            end
+        end
+        
+        % normalize descriptor vector over current block (L2 norm)
+        fvec = fvec / sqrt(sum(sum(fvec.^2)));
+        fvec2 = [fvec2; fvec(:)];
+        
     end
 end
 
-% Loop through 20x20 blocks
-for ii = 5:12
-    for jj = 1:16
-        vertIdxs = (ii-1)*20+1:ii*20;
-        horizIdxs = (jj-1)*20+1:jj*20;
-        vec(vecIdx, :) = calculateHoG(mag(vertIdxs, horizIdxs), ang(vertIdxs, horizIdxs));
-        vecIdx = vecIdx + 1;
-    end
-end
-
-return
+return;

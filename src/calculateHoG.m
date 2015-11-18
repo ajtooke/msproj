@@ -1,4 +1,4 @@
-function [grad, uniqueBins] = calculateHoG(mag, ang, numBins, useSignedOrientation)
+function [grad, uniqueBins, bins] = calculateHoG(mag, ang, numBins, useSignedOrientation)
 
 % This function takes as input a block of equivalently sized magnitude and
 % angle matrices and returns a histogram of gradients with vote values
@@ -6,8 +6,7 @@ function [grad, uniqueBins] = calculateHoG(mag, ang, numBins, useSignedOrientati
 
 % separate input angles into bins.
 bins = floor((ang + pi*(1 + useSignedOrientation)/numBins/2) * numBins/pi) * pi/numBins;
-% uniqueBins = 0:(1 + useSignedOrientation)*pi/numBins:(1 + useSignedOrientation - 1/numBins)*pi;
-uniqueBins = unique(bins);
+uniqueBins = 0:(1 + useSignedOrientation)*pi/numBins:(1 + useSignedOrientation - 1/numBins)*pi;
 
 grad = zeros(size(uniqueBins));
 % loop over the bins for now (vectorize later ...)
