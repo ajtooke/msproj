@@ -32,6 +32,11 @@ while iter <= numIterations
     testIdx = ismember(imgLabel, testImgs);
     
     model = svmtrain(label(trainIdx), fvec(trainIdx, :), '-s 3');
+    
+    if isnan(model.rho)
+        continue;
+    end
+    
     [pred_label, mse, ~] = svmpredict(label(testIdx), fvec(testIdx, :), model);
     
     result(iter).pred_label = pred_label;

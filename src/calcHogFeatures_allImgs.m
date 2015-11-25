@@ -23,7 +23,7 @@ end
 
 for cir = CIRs
     
-    imgCount = 0;
+    imgCount = 1;
     
     for types = 1:length(subd)
         currentDir = [subd{types}, '\', 'CIR', num2str(cir)];
@@ -33,16 +33,36 @@ for cir = CIRs
         d = d(3:end);
         
         for kk = 1:length(d)
-            if ~strcmpi((d{types}), 'thumbs.db')
-                imgCount = imgCount + 1;
-                imgFile = [currentDir, '\', d{types}];
+            if ~strcmpi((d{kk}), 'thumbs.db')
+                imgFile = [currentDir, '\', d{kk}];
                 
                 fvec = calcHogFeatures_singleImg(imgFile, ...
                     cellSize, blockSize, blockOverlap, numBins, useSignedOrientation, ...
                     imgSize, augmentDataShift, augmentDataFlip);
                 
-                outstruct.(['CIR', num2str(cir)]).(['im', num2str(imgCount)]).fvec = fvec;
-                outstruct.(['CIR', num2str(cir)]).(['im', num2str(imgCount)]).name = imgFile;
+                % Temporarily augment high CIR images!!!!
+                %
+                %
+                
+                count = 1;
+                if any(cir == [7, 8])
+                    num2copy = 2;
+                elseif cir == 9
+                    num2copy = 3;
+                else
+                    num2copy = 1;
+                end
+                
+                while count <= num2copy
+                    outstruct.(['CIR', num2str(cir)]).(['im', num2str(imgCount)]).fvec = fvec;
+                    outstruct.(['CIR', num2str(cir)]).(['im', num2str(imgCount)]).name = imgFile;
+                    imgCount = imgCount + 1;
+                    count = count + 1;
+                end
+                
+                %
+                %
+                % / Temporarily augment high CIR images!!!!
             end
         end
     end
