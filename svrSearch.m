@@ -6,9 +6,9 @@ cellSize = 20;
 blockSize = 2;
 blockOverlap = 0;
 useSignedOrientation = false;
-imgSize = [];
-augmentDataShift = true;
-augmentDataFlip = true;
+imgSize = [240, 320];
+augmentDataShift = false;
+augmentDataFlip = false;
 iter = 1;
 numTraining = 3/4;
 
@@ -21,19 +21,19 @@ numImgs = length(uniqueImgs);
 result = struct();
 
 param.s = 3;
-param.C = 1;
+param.Cset = 2.^(-0:4);
 param.t = 2;
-param.gset = 2.^(-13:10);
-param.eset = 0:0.1:1;
+param.gset = 2.^(-7:-2);
+param.e = 0.001;
 
-absErr = zeros(length(param.gset), length(param.eset));
+absErr = zeros(length(param.Cset), length(param.gset));
 
 % for ii = 1:length(param.gset)
-for ii = 18
-    param.g = param.gset(ii);
+for ii = 1:length(param.Cset)
+    param.C = param.Cset(ii);
     
-    for jj = 7:length(param.eset)
-        param.e = param.eset(jj);
+    for jj = 1:length(param.gset)
+        param.g = param.gset(jj);
         
         param.libsvm = ['-s ', num2str(param.s), ' -t ', num2str(param.t), ...
             ' -c ', num2str(param.C), ' -g ', num2str(param.g), ...
@@ -41,7 +41,7 @@ for ii = 18
         
         randseed(1);
         
-        fprintf('Calculating abs error for g = %f, e = %f', param.g, param.e);
+        fprintf('Calculating abs error for C = %f, g = %f', param.C, param.g);
         
         while iter <= numIterations
             

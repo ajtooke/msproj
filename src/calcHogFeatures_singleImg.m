@@ -23,8 +23,7 @@ img = imresize(img, imgSize);
 if augmentDataShift
     iter = 1;
     
-    loopIdx = 0:double(augmentDataFlip);
-    
+    loopIdx = 0:double(augmentDataFlip);    
     numBlocks = floor(((imgSize-15)./cellSize - blockSize)./(blockSize - blockOverlap) + 1);
     fVec = zeros(prod([numBlocks, blockSize.^2, numBins]), 16 * length(loopIdx));
     
@@ -43,7 +42,22 @@ if augmentDataShift
             end
         end
     end
+elseif ~augmentDataShift && augmentDataFlip
+    iter = 1;
+    loopIdx = 0:1;
+    numBlocks = floor(((imgSize)./cellSize - blockSize)./(blockSize - blockOverlap) + 1);
+    fVec = zeros(prod([numBlocks, blockSize.^2, numBins]), 2);
+    colIdx = 1:size(img, 2);
     
+    for kk = loopIdx
+        if kk
+            colIdx = fliplr(colIdx);
+        end
+        tempVec = buildFeatureVectorSVR(img(:, colIdx, :), ...
+            cellSize, blockSize, blockOverlap, numBins, useSignedOrientation);
+        fVec(:, iter) = reshape(tempVec, [numel(tempVec), 1]);
+        iter = iter + 1;
+    end
 else
     tempVec = buildFeatureVectorSVR(img, ...
         cellSize, blockSize, blockOverlap, numBins, useSignedOrientation);

@@ -4,7 +4,7 @@ function outstruct = calcHogFeatures_allImgs(cellSize, blockSize, blockOverlap, 
 % Calculate feature vectors with specified HoG options and return struct
 % format. Also save as .mat file if a filename is given.
 
-subd = {'test\CIRs Bedroom', 'test\CIRs Kitchen', 'test\CIRs Living Room'};
+subd = {'test2\CIRs Bedroom', 'test2\CIRs Kitchen', 'test2\CIRs Living Room'};
 CIRs = 1:9;
 outstruct = struct();
 
@@ -45,21 +45,24 @@ for cir = CIRs
                 %
                 
                 count = 1;
-                if any(cir == [7, 8])
-                    num2copy = 2;
-                elseif cir == 9
-                    num2copy = 3;
-                else
+                tempFvec = [];
+%                 if any(cir == [7, 8])
+%                     num2copy = 2;
+%                 elseif cir == 9
+%                     num2copy = 3;
+%                 else
                     num2copy = 1;
-                end
+%                 end
                 
                 while count <= num2copy
-                    outstruct.(['CIR', num2str(cir)]).(['im', num2str(imgCount)]).fvec = fvec;
+                    outstruct.(['CIR', num2str(cir)]).(['im', num2str(imgCount)]).fvec = ...
+                        [tempFvec, fvec];
                     outstruct.(['CIR', num2str(cir)]).(['im', num2str(imgCount)]).name = imgFile;
-                    imgCount = imgCount + 1;
                     count = count + 1;
+                    tempFvec = outstruct.(['CIR', num2str(cir)]).(['im', num2str(imgCount)]).fvec;
                 end
                 
+                imgCount = imgCount + 1;
                 %
                 %
                 % / Temporarily augment high CIR images!!!!

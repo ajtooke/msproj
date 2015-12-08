@@ -20,3 +20,5 @@ ang = atan2(dim_dy, dim_dx);
 
 % calculate final magnitude.
 mag = sqrt(dim_dx.^2 + dim_dy.^2);
+
+return;
