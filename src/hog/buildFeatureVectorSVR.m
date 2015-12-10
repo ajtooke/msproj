@@ -1,13 +1,13 @@
-function fvec2 = buildFeatureVectorSVR(img, cellSize, blockSize, blockOverlap, numBins, useSignedOrientation)
+function fvec2 = buildFeatureVectorSVR(grad, ang, cellSize, blockSize, blockOverlap, numBins, useSignedOrientation)
 
-[r, c, d] = size(img);
-if d > 1
-    img = rgb2gray(img);
-end
+[r, c, ~] = size(grad);
+% if d > 1
+%     img = rgb2gray(img);
+% end
 % for ii = 1:d
 %     [grad(:, :, ii), ang(:, :, ii)] = calculateGradient(img(:, :, ii));
 % end
-[grad, ang] = calculateGradient(img);
+% [grad, ang] = calculateGradient(img);
 % % Use maximum color channel as magnitude and angle of gradient.
 % [~, maxIdx] = max(grad, [], 3);
 % grad = grad(:, :, maxIdx);
@@ -40,7 +40,9 @@ for ii = 1:numHorizBlocks
         end
         
         % normalize descriptor vector over current block (L2 norm)
-        fvec = fvec / sqrt(sum(sum(fvec.^2)));
+        if any(any(fvec))
+            fvec = fvec' / sqrt(sum(sum(fvec.^2)));
+        end
         fvec2 = [fvec2; fvec(:)];
         
     end

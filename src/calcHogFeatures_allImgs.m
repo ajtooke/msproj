@@ -46,13 +46,13 @@ for cir = CIRs
                 
                 count = 1;
                 tempFvec = [];
-%                 if any(cir == [7, 8])
-%                     num2copy = 2;
-%                 elseif cir == 9
-%                     num2copy = 3;
-%                 else
+                if any(cir == [7, 8])
+                    num2copy = 2;
+                elseif cir == 9
+                    num2copy = 3;
+                else
                     num2copy = 1;
-%                 end
+                end
                 
                 while count <= num2copy
                     outstruct.(['CIR', num2str(cir)]).(['im', num2str(imgCount)]).fvec = ...

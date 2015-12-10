@@ -1,7 +1,7 @@
 % function svrSearch(numIterations)
 
 numIterations = 4;
-numBins = 4;
+numBins = 6;
 cellSize = 20;
 blockSize = 2;
 blockOverlap = 0;
@@ -21,10 +21,10 @@ numImgs = length(uniqueImgs);
 result = struct();
 
 param.s = 3;
-param.Cset = 2.^(-0:4);
+param.Cset = 2.^(-13:10);
 param.t = 2;
-param.gset = 2.^(-7:-2);
-param.e = 0.001;
+param.gset = 2.^(-10:0);
+param.e = 0.01;
 
 absErr = zeros(length(param.Cset), length(param.gset));
 

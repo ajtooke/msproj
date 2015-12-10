@@ -30,14 +30,17 @@ numImgs = length(uniqueImgs);
 result = struct();
 
 param.s = 3;
-param.C = 2^2;
+param.C = 2^2; % this is best without augmentation
+% param.C = 1; % with augmentation
 param.t = 2;
-param.g = 2^(-5);
-param.e = 0.001;
+param.g = 2^(-5); %this is best without augmentation
+% param.g = 2^(-4); %with augmentation
+param.m = 2000;
+param.e = 0.01;
 
 param.libsvm = ['-s ', num2str(param.s), ' -t ', num2str(param.t), ...
     ' -c ', num2str(param.C), ' -g ', num2str(param.g), ...
-    ' -p ', num2str(param.e)];
+    ' -p ', num2str(param.e), ' -m ', num2str(param.m)];
 
 % pick out training and testing sets at random in a specified ratio, run
 % SVM algorithm.

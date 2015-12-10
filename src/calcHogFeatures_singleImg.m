@@ -18,7 +18,15 @@ end
 
 % resize image to 15 pixels larger than 320x240 so we can shift it by 5
 % pixels.
-img = imresize(img, imgSize);
+% Also add 4 to the size to account for taking filter output only in the
+% valid region.
+img = imresize(img, imgSize + 2);
+
+[~, ~, d] = size(img);
+if d > 1
+    img = rgb2gray(img);
+end
+[grad, ang] = calculateGradient(img);
 
 if augmentDataShift
     iter = 1;
@@ -35,13 +43,14 @@ if augmentDataShift
                 if kk
                     colIdx = fliplr(colIdx);
                 end
-                tempVec = buildFeatureVectorSVR(img(rowIdx, colIdx, :), ...
+                tempVec = buildFeatureVectorSVR(grad(rowIdx, colIdx, :), ang(rowIdx, colIdx, :), ...
                     cellSize, blockSize, blockOverlap, numBins, useSignedOrientation);
                 fVec(:, iter) = reshape(tempVec, [numel(tempVec), 1]);
                 iter = iter + 1;
             end
         end
     end
+    
 elseif ~augmentDataShift && augmentDataFlip
     iter = 1;
     loopIdx = 0:1;
@@ -53,15 +62,17 @@ elseif ~augmentDataShift && augmentDataFlip
         if kk
             colIdx = fliplr(colIdx);
         end
-        tempVec = buildFeatureVectorSVR(img(:, colIdx, :), ...
+        tempVec = buildFeatureVectorSVR(grad(:, colIdx, :), ang(:, colIdx, :),...
             cellSize, blockSize, blockOverlap, numBins, useSignedOrientation);
         fVec(:, iter) = reshape(tempVec, [numel(tempVec), 1]);
         iter = iter + 1;
     end
+    
 else
-    tempVec = buildFeatureVectorSVR(img, ...
+    tempVec = buildFeatureVectorSVR(grad, ang, ...
         cellSize, blockSize, blockOverlap, numBins, useSignedOrientation);
     fVec = reshape(tempVec, [numel(tempVec), 1]);
+    
 end
 
 

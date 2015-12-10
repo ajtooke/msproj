@@ -10,8 +10,8 @@ d_dy = [-1 -1 -1;
         0  0  0;
         1  1  1];
     
-dim_dx = filter2(d_dx, img);
-dim_dy = filter2(d_dy, img);
+dim_dx = filter2(d_dx, img, 'valid');
+dim_dy = filter2(d_dy, img, 'valid');
 
 % Calculate magnitude
 
