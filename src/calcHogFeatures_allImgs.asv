@@ -39,7 +39,7 @@ for cir = CIRs
                 
                 fvec = calcHogFeatures_singleImg(imgFile, ...
                     cellSize, blockSize, blockOverlap, numBins, useSignedOrientation, ...
-                    imgSize, augmentDataShift, augmentDataFlip, augmentDataRotate);
+                    imgSize, augmentDataShift, augmentDataFlip);
                 
                 % Temporarily augment high CIR images!!!!
                 %

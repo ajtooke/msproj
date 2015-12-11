@@ -1,4 +1,4 @@
-function result = svmValidation(numIterations, imgSize, augmentDataShift, augmentDataFlip)
+function result = svmValidation(numIterations, imgSize, augmentDataShift, augmentDataFlip, augmentDataRotate)
 
 randseed(1);
 
@@ -11,6 +11,7 @@ if nargin == 1
     imgSize = [];
     augmentDataShift = true;
     augmentDataFlip = true;
+    augmentDataRotate = false;
 end
 iter = 1;
 resultIdx = 1;
@@ -18,7 +19,7 @@ crossValid = [0, 0.25, 0.5, 0.75, 1];
 useThreeGroups = false;
 
 outstruct = calcHogFeatures_allImgs(cellSize, blockSize, blockOverlap, ...
-    numBins, useSignedOrientation, imgSize, augmentDataShift, augmentDataFlip, []);
+    numBins, useSignedOrientation, imgSize, augmentDataShift, augmentDataFlip, augmentDataRotate, []);
 if useThreeGroups
     [label, fvec, imgLabel] = readFvecData_threeLabels(outstruct);
 else

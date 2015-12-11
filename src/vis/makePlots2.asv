@@ -60,19 +60,12 @@ title(sprintf('Std dev of CIR value, sig = %.2f', std(abs(true_label(~nanIdx) - 
 edges = 0.5:9.5;
 ylims = zeros(1, maxScore);
 handles = zeros(1, maxScore);
-v = version();
+v = 
 for ii = 1:maxScore
     
     subplot(subPx, 3, 3+ii);
     
-    % version checking using the two I have access to. Adjust accordingly
-    if strcmp(v, '7.13.0.564 (R2011b)')
-        n = histc(score(true_label == ii), edges);
-        n(end-1) = n(end-1) + n(end);
-        bar(edges(1:end-1) + 0.5, n(1:end-1));
-    else
-        histogram(score(true_label == ii), edges);
-    end
+    histogram(score(true_label == ii), edges);
     xlabel('Score');
     ylabel('Count');
     title(sprintf('CIR level %d', ii));

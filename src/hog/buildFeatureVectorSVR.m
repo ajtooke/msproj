@@ -1,17 +1,6 @@
 function fvec2 = buildFeatureVectorSVR(grad, ang, cellSize, blockSize, blockOverlap, numBins, useSignedOrientation)
 
 [r, c, ~] = size(grad);
-% if d > 1
-%     img = rgb2gray(img);
-% end
-% for ii = 1:d
-%     [grad(:, :, ii), ang(:, :, ii)] = calculateGradient(img(:, :, ii));
-% end
-% [grad, ang] = calculateGradient(img);
-% % Use maximum color channel as magnitude and angle of gradient.
-% [~, maxIdx] = max(grad, [], 3);
-% grad = grad(:, :, maxIdx);
-% ang = ang(:, :, maxIdx);
 
 % take mod if using unsigned orientation.
 if ~useSignedOrientation
@@ -34,14 +23,14 @@ for ii = 1:numHorizBlocks
             for ll = 1:(blockSize)
                 horizIdxs = ((ii-1)*blockJump*cellSize + (kk-1)*cellSize + 1):((ii-1)*blockJump*cellSize + kk*cellSize);
                 vertIdxs = ((jj-1)*blockJump*cellSize + (ll-1)*cellSize + 1):((jj-1)*blockJump*cellSize + ll*cellSize);
-                fvec(currentCell, :) = calculateHoG(grad(vertIdxs, horizIdxs), ang(vertIdxs, horizIdxs), numBins, useSignedOrientation);
+                fvec(:, currentCell) = calculateHoG(grad(vertIdxs, horizIdxs), ang(vertIdxs, horizIdxs), numBins, useSignedOrientation)';
                 currentCell = currentCell + 1;
             end
         end
         
         % normalize descriptor vector over current block (L2 norm)
         if any(any(fvec))
-            fvec = fvec' / sqrt(sum(sum(fvec.^2)));
+            fvec = fvec / sqrt(sum(sum(fvec.^2)));
         end
         fvec2 = [fvec2; fvec(:)];
         

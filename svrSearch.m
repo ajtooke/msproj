@@ -1,19 +1,20 @@
 % function svrSearch(numIterations)
 
 numIterations = 4;
-numBins = 6;
+numBins = 4;
 cellSize = 20;
 blockSize = 2;
 blockOverlap = 0;
 useSignedOrientation = false;
 imgSize = [240, 320];
 augmentDataShift = false;
-augmentDataFlip = false;
+augmentDataFlip = true;
+augmentDataRotate = true;
 iter = 1;
 numTraining = 3/4;
 
 outstruct = calcHogFeatures_allImgs(cellSize, blockSize, blockOverlap, ...
-    numBins, useSignedOrientation, imgSize, augmentDataShift, augmentDataFlip, []);
+    numBins, useSignedOrientation, imgSize, augmentDataShift, augmentDataFlip, augmentDataRotate, []);
 [label, fvec, imgLabel] = readFvecData(outstruct);
 
 uniqueImgs = unique(imgLabel);

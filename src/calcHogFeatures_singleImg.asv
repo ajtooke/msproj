@@ -34,7 +34,7 @@ if augmentDataRotate
             idx1 = find(imgRotTemp2(:, 1) > 0, 1, 'first');
             idx2 = find(imgRotTemp2(end, :) > 0, 1, 'first');
         else
-            idx1 = find(imgRotTemp2(:, end) > 0, 1, 'first');
+            idx1 = find(imgRotTemp2(end, 1) > 0, 1, 'first');
             idx2 = find(imgRotTemp2(1, :) > 0, 1, 'first');
         end
         
