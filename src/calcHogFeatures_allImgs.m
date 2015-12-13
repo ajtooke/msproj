@@ -4,7 +4,7 @@ function outstruct = calcHogFeatures_allImgs(cellSize, blockSize, blockOverlap, 
 % Calculate feature vectors with specified HoG options and return struct
 % format. Also save as .mat file if a filename is given.
 
-subd = {'test2\CIRs Bedroom', 'test2\CIRs Kitchen', 'test2\CIRs Living Room'};
+subd = {'testImgs\CIRs Bedroom', 'testImgs\CIRs Kitchen', 'testImgs\CIRs Living Room'};
 CIRs = 1:9;
 outstruct = struct();
 
@@ -12,7 +12,7 @@ if ~nargin
     cellSize = 20;
     blockSize = 2;
     blockOverlap = 0;
-    numBins = 6;
+    numBins = 4;
     useSignedOrientation = false;
     imgSize = [255, 335];
     augmentDataShift = true;

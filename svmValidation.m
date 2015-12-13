@@ -23,7 +23,7 @@ outstruct = calcHogFeatures_allImgs(cellSize, blockSize, blockOverlap, ...
 if useThreeGroups
     [label, fvec, imgLabel] = readFvecData_threeLabels(outstruct);
 else
-    [label, fvec, imgLabel] = readFvecData(outstruct);
+    [label, fvec, imgLabel, imgName] = readFvecData(outstruct);
 end
 
 uniqueImgs = unique(imgLabel);
@@ -71,6 +71,7 @@ while iter <= numIterations
         result(resultIdx).pred_label = pred_label;
         result(resultIdx).true_label = label(testIdx);
         result(resultIdx).img_num = imgLabel(testIdx);
+        result(resultIdx).imgName = imgName;
         result(resultIdx).total_imgs = numImgs;
         result(resultIdx).mse = mse;
         result(resultIdx).model = model;
