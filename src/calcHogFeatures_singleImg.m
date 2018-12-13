@@ -24,7 +24,7 @@ if d > 1
 end
 
 if augmentDataRotate
-    rotAngle = [-5 5];
+    rotAngle = [-10 -5 5 10];
     imgRotTemp = imresize(img, round(1.3 * imgSize));
     
     for rot = 1:length(rotAngle)    

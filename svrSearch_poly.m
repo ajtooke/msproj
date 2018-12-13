@@ -10,10 +10,10 @@ cellSize = 20;
 blockSize = 2;
 blockOverlap = 0;
 useSignedOrientation = false;
-imgSize = [255, 335];
-augmentDataShift = true;
-augmentDataFlip = true;
-augmentDataRotate = false;
+imgSize = [240, 320];
+augmentDataShift = false;
+augmentDataFlip = false;
+augmentDataRotate = true;
 crossValid = [0, 0.25, 0.5, 0.75, 1];
 
 % Calculate all HOG features ...
@@ -29,28 +29,30 @@ result = struct();
 
 % Set libsvm parameters here and search set for C and gamma.
 param.s = 3;
-param.Cset = 2.^(0:4);
-param.t = 2;
-param.gset = 2.^(-7:-3);
-param.e = 0.1;
+% param.Cset = 2.^(-13:10);
+param.C = 4;
+param.coef0set = 2.^(-3:3);
+param.t = 1;
+param.gset = 2.^(-7:3);
+param.e = 0.01;
 
 % set up absolute error array.
 absErr = zeros(length(param.Cset), length(param.gset));
 
-rng(1);
+randseed(1);
 permIdxs = round(crossValid * numImgs);
 permIdxs(end) = permIdxs(end) + 1;
 permIdxs(1) = 1;
 permSet = randperm(numImgs);
 
 % loop over all parameters.
-for ii = 1:length(param.Cset)
-    param.C = param.Cset(ii);
+for ii = 1:length(param.coef0set)
+    param.coef0 = param.coef0set(ii);
     
     for jj = 1:length(param.gset)
         param.g = param.gset(jj);
         param.libsvm = ['-s ', num2str(param.s), ' -t ', num2str(param.t), ...
-            ' -c ', num2str(param.C), ' -g ', num2str(param.g), ...
+            ' -c ', num2str(param.C), ' -g ', num2str(param.g), ' -r ', num2str(param.coef0)...
             ' -p ', num2str(param.e)];
         
         fprintf('Calculating abs error for C = %f, g = %f', param.C, param.g);
@@ -73,14 +75,14 @@ for ii = 1:length(param.Cset)
             testLabel = label(testIdx);
             pred_label = svmpredict(testLabel, fvec(testIdx, :), model);
             
+            nanIdx = isnan(pred_label);
+            
             % just keep track of mean absolute error over parameter set
             % rather than populating full results!
-            absErrAll{kk} = abs(testLabel - pred_label);
+            absErr(ii, jj) = absErr(ii, jj) + mean(abs(testLabel(~nanIdx) - pred_label(~nanIdx)));
         end
-        
-        absErrAll = cell2mat(absErrAll(:));
-        absErr(ii, jj) = mean(absErrAll(:));
-        clear absErrAll
                 
     end
 end
+
+absErr = absErr / numIterations;

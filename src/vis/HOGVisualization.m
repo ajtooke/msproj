@@ -1,5 +1,9 @@
 function HOGVisualization(img)
 
+% This function plots an image side by side with its HOG arrow
+% representation. Accepts either an image filename or image matrix as
+% input. Indexing will need to be modified to work with non-default parameters.
+
 cellSize = 20;
 blockSize = 2;
 blockOverlap = 0;
@@ -39,7 +43,6 @@ f = permute(f, [2, 1, 3]);
 hogvis = uint8(getHOGVisualization(f, cellSize));
 
 img = imresize(img, imgSize);
-% img(hogvis ~= 0) = hogvis(hogvis ~= 0);
 
 figure;
 subplot(1, 2, 1);

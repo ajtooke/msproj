@@ -10,9 +10,9 @@ cellSize = 20;
 blockSize = 2;
 blockOverlap = 0;
 useSignedOrientation = false;
-imgSize = [255, 335];
-augmentDataShift = true;
-augmentDataFlip = true;
+imgSize = [240, 320];
+augmentDataShift = false;
+augmentDataFlip = false;
 augmentDataRotate = false;
 crossValid = [0, 0.25, 0.5, 0.75, 1];
 
@@ -28,11 +28,10 @@ numImgs = length(uniqueImgs);
 result = struct();
 
 % Set libsvm parameters here and search set for C and gamma.
-param.s = 3;
-param.Cset = 2.^(0:4);
+param.s = 0;
+param.Cset = 2.^(-13:10);
 param.t = 2;
-param.gset = 2.^(-7:-3);
-param.e = 0.1;
+param.gset = 2.^(-10:0);
 
 % set up absolute error array.
 absErr = zeros(length(param.Cset), length(param.gset));
@@ -50,8 +49,7 @@ for ii = 1:length(param.Cset)
     for jj = 1:length(param.gset)
         param.g = param.gset(jj);
         param.libsvm = ['-s ', num2str(param.s), ' -t ', num2str(param.t), ...
-            ' -c ', num2str(param.C), ' -g ', num2str(param.g), ...
-            ' -p ', num2str(param.e)];
+            ' -c ', num2str(param.C), ' -g ', num2str(param.g)];
         
         fprintf('Calculating abs error for C = %f, g = %f', param.C, param.g);
         
@@ -72,6 +70,8 @@ for ii = 1:length(param.Cset)
             
             testLabel = label(testIdx);
             pred_label = svmpredict(testLabel, fvec(testIdx, :), model);
+            
+            nanIdx = isnan(pred_label);
             
             % just keep track of mean absolute error over parameter set
             % rather than populating full results!
